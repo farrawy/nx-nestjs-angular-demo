@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import { User, UserDocument, UserRole } from './user.schema';
 import { UserResponse } from './interfaces/user.interface';
-import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import { CreateUserDto, SearchUserDto, UpdateUserDto } from './dto/user.dto';
 
 @Injectable()
 export class UsersService {
@@ -84,7 +84,14 @@ export class UsersService {
 
   toResponse(user: UserDocument): UserResponse {
     const { _id, email, createdAt, isActive, role } = user.toObject();
-    return { _id: _id.toString(), email, createdAt, isActive, role };
+    return {
+      _id: _id.toString(),
+      email,
+      name: user.name,
+      createdAt,
+      isActive,
+      role,
+    };
   }
 
   async updateRole(userId: string, role: UserRole): Promise<UserResponse> {
@@ -95,5 +102,28 @@ export class UsersService {
     user.role = role;
     await user.save();
     return this.toResponse(user);
+  }
+
+  async searchUsers(searchParams: any): Promise<UserResponse[]> {
+    const filters: any = {};
+
+    if (searchParams.email) {
+      filters.email = { $regex: searchParams.email, $options: 'i' };
+    }
+
+    if (searchParams.name) {
+      filters.name = { $regex: searchParams.name, $options: 'i' };
+    }
+
+    if (searchParams.role) {
+      filters.role = searchParams.role;
+    }
+
+    if (searchParams.isActive !== undefined) {
+      filters.isActive = searchParams.isActive;
+    }
+
+    const users = await this.userModel.find(filters).exec();
+    return users.map((user) => this.toResponse(user));
   }
 }

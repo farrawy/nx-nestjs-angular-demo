@@ -1,10 +1,19 @@
-import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UsersService } from '../users/users.service';
 import { Roles } from '../auth/decorators/role.decorator';
 import { UserResponse } from '../users/interfaces/user.interface';
 import { UserRole } from '../users/user.schema';
+import { SearchUserDto } from '../users/dto/user.dto';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -28,5 +37,25 @@ export class AdminController {
   ): Promise<UserResponse> {
     console.log(`Updating role for user ${userId} to ${role}`); // Log for debugging
     return this.usersService.updateRole(userId, role);
+  }
+
+  @Get('search')
+  async searchUsers(@Query() query: SearchUserDto): Promise<UserResponse[]> {
+    const searchParams: any = {};
+
+    if (query.email) {
+      searchParams.email = query.email;
+    }
+    if (query.name) {
+      searchParams.name = query.name;
+    }
+    if (query.role) {
+      searchParams.role = query.role;
+    }
+    if (query.isActive !== undefined && query.isActive !== '') {
+      searchParams.isActive = query.isActive === 'true' ? true : false;
+    }
+
+    return this.usersService.searchUsers(searchParams);
   }
 }

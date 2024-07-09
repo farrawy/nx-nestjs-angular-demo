@@ -5,6 +5,7 @@ import {
   IsString,
   IsBoolean,
 } from 'class-validator';
+import { UserRole } from '../user.schema';
 
 export class CreateUserDto {
   @IsOptional()
@@ -36,4 +37,21 @@ export class UpdateUserDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+}
+
+export class SearchUserDto {
+  @IsOptional()
+  @IsString()
+  readonly email?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly name?: string;
+
+  @IsOptional()
+  readonly role?: UserRole;
+
+  @IsOptional()
+  @IsBoolean()
+  readonly isActive?: string;
 }

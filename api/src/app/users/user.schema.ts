@@ -7,7 +7,7 @@ export type UserRole = 'admin' | 'user';
 export class User extends Document {
   _id: string;
 
-  @Prop()
+  @Prop({ required: true })
   name: string;
 
   @Prop({ required: true, unique: true })

@@ -2,13 +2,14 @@ import {
   Body,
   Controller,
   Param,
+  Patch,
   Post,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { CreateUserDto } from '../users/dto/user.dto';
+import { CreateUserDto, UpdateUserDto } from '../users/dto/user.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UserResponse } from '../users/interfaces/user.interface';
 import { UsersService } from '../users/users.service';
@@ -39,6 +40,23 @@ export class AuthController {
     const userObject = user.toObject ? user.toObject() : user;
     delete userObject.password;
     return userObject;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('profile')
+  async updateProfile(
+    @Request() req,
+    @Body() updateProfileDto: UpdateUserDto
+  ): Promise<UserResponse> {
+    console.log(`Request user: ${JSON.stringify(req.user)}`); // Log for debugging
+    if (!req.user || !req.user._id) {
+      throw new Error(
+        'User information is not correctly attached to the request.'
+      );
+    }
+    const userId = req.user._id;
+    console.log(`Updating profile for user ${userId}`); // Log for debugging
+    return this.usersService.update(userId, updateProfileDto);
   }
 
   @Post('register')
