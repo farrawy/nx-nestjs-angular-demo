@@ -1,0 +1,13 @@
+<div class="">
+  <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()">
+    <input type="email" formControlName="email" />
+    <input type="password" formControlName="password" />
+
+    <button type="submit">Login</button>
+  </form>
+
+
+  <div class="" *ngIf="token">
+    {{ token }}
+  </div>
+</div>

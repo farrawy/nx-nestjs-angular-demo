@@ -61,10 +61,14 @@ export class AuthService {
     return null;
   }
 
-  async login(user: UserResponse): Promise<{ access_token: string }> {
+  async login(
+    user: UserResponse
+  ): Promise<{ access_token: string; expires_in: number }> {
     const payload = { email: user.email, sub: user._id, role: user.role };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+
+    const access_token = this.jwtService.sign(payload);
+    const expires_in = 8 * 60 * 60; // 8 hours
+
+    return { access_token, expires_in };
   }
 }

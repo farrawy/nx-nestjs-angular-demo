@@ -1,0 +1,22 @@
+<!-- profile.component.html -->
+<div class="profile-container" *ngIf="profile && !loading">
+  <h2>User Profile</h2>
+  <div class="profile-details">
+    <p><strong>ID:</strong> {{ profile._id }}</p>
+    <p><strong>Name:</strong> {{ profile.name }}</p>
+    <p><strong>Email:</strong> {{ profile.email }}</p>
+    <p><strong>Role:</strong> {{ profile.role }}</p>
+    <p>
+      <strong>Status:</strong> {{ profile.isActive ? 'Active' : 'Inactive' }}
+    </p>
+    <p><strong>Created At:</strong> {{ profile.createdAt | date }}</p>
+  </div>
+</div>
+
+<div class="profile-container" *ngIf="loading">
+  <p>Loading profile...</p>
+</div>
+
+<div class="profile-container" *ngIf="error">
+  <p>{{ error }}</p>
+</div>

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   Post,
@@ -31,6 +32,11 @@ export class AuthController {
     @Request() req: RequestWithUser
   ): Promise<{ access_token: string }> {
     return this.authService.login(req.user);
+  }
+
+  @Get('test')
+  test() {
+    return 'test';
   }
 
   @UseGuards(JwtAuthGuard)
