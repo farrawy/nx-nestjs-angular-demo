@@ -1,7 +1,7 @@
 {
-  "name": "my-workspace",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/my-workspace/src",
+  "name": "api",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "api/src",
   "projectType": "application",
   "tags": [],
   "targets": {
@@ -9,14 +9,14 @@
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "my-workspace:build"
+        "buildTarget": "api:build"
       },
       "configurations": {
         "development": {
-          "buildTarget": "my-workspace:build:development"
+          "buildTarget": "api:build:development"
         },
         "production": {
-          "buildTarget": "my-workspace:build:production"
+          "buildTarget": "api:build:production"
         }
       }
     }
