@@ -11,6 +11,8 @@
     </p>
     <p><strong>Created At:</strong> {{ profile.createdAt | date }}</p>
   </div>
+
+  <button (click)="onLogout()">Logout</button>
 </div>
 
 <div class="profile-container" *ngIf="loading">

@@ -63,13 +63,18 @@ export class AuthEffects {
     )
   );
 
-  logout$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AuthActions.logout),
-      tap(() => {
-        localStorage.removeItem('token');
-        this.router.navigate(['/login']);
-      })
-    )
+  logout$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.logout),
+        tap(() => {
+          localStorage.removeItem('token');
+          localStorage.removeItem('token_expiration');
+          this.router.navigate(['/login']);
+        })
+      ),
+    {
+      dispatch: false,
+    }
   );
 }

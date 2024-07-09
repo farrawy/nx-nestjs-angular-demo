@@ -47,4 +47,8 @@ export class ProfileComponent implements OnInit {
       this.error = error;
     });
   }
+
+  onLogout() {
+    this.store.dispatch(AuthActions.logout())
+  }
 }

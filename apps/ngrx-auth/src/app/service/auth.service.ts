@@ -13,11 +13,17 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(email: string, password: string): Observable<{ access_token: string }> {
-    return this.http.post<{ access_token: string }>(`${this.apiUrl}/login`, {
-      email,
-      password,
-    });
+  login(
+    email: string,
+    password: string
+  ): Observable<{ access_token: string; expires_in: number }> {
+    return this.http.post<{ access_token: string; expires_in: number }>(
+      `${this.apiUrl}/login`,
+      {
+        email,
+        password,
+      }
+    );
   }
 
   getProfile(token: string): Observable<UserProfile> {
@@ -28,5 +34,24 @@ export class AuthService {
       {},
       { headers }
     );
+  }
+
+  initAutoLogout() {
+    const expirationTime = localStorage.getItem('token_expiration');
+    if (expirationTime) {
+      const expiresIn = +expirationTime - new Date().getTime();
+      if (expiresIn > 0) {
+        setTimeout(() => {
+          this.logout();
+        }, expiresIn);
+      } else {
+        this.logout();
+      }
+    }
+  }
+
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('token_expiration');
   }
 }

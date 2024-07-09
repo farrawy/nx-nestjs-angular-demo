@@ -14,6 +14,7 @@ import { CreateUserDto, UpdateUserDto } from '../users/dto/user.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UserResponse } from '../users/interfaces/user.interface';
 import { UsersService } from '../users/users.service';
+import { UserDocument } from '../users/user.schema';
 
 interface RequestWithUser extends Request {
   user: UserResponse;
@@ -30,7 +31,7 @@ export class AuthController {
   @Post('login')
   async login(
     @Request() req: RequestWithUser
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ access_token: string; expires_in: number }> {
     return this.authService.login(req.user);
   }
 
@@ -42,10 +43,9 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('profile')
   getProfile(@Request() req: RequestWithUser): Omit<UserResponse, 'password'> {
-    const user = req.user as any;
-    const userObject = user.toObject ? user.toObject() : user;
-    delete userObject.password;
-    return userObject;
+    const user = req.user as UserDocument;
+    const userObject = user;
+    return this.usersService.toResponse(userObject);
   }
 
   @UseGuards(JwtAuthGuard)
