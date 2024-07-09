@@ -126,4 +126,38 @@ export class UsersService {
     const users = await this.userModel.find(filters).exec();
     return users.map((user) => this.toResponse(user));
   }
+
+  async activateUser(id: string): Promise<User> {
+    const existingUser = await this.userModel
+      .findByIdAndUpdate(
+        id,
+        { isActive: true },
+        {
+          new: true,
+        }
+      )
+      .exec();
+
+    if (!existingUser) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return existingUser;
+  }
+
+  async deactivateUser(id: string): Promise<User> {
+    const existingUser = await this.userModel
+      .findByIdAndUpdate(
+        id,
+        { isActive: false },
+        {
+          new: true,
+        }
+      )
+      .exec();
+
+    if (!existingUser) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return existingUser;
+  }
 }

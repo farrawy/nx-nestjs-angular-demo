@@ -1,15 +1,7 @@
-import {
-  Body,
-  Controller,
-  NotFoundException,
-  Patch,
-  Post,
-  Put,
-  Request,
-} from '@nestjs/common';
-import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import { Body, Controller, Post } from '@nestjs/common';
+import { CreateUserDto } from './dto/user.dto';
 import { UsersService } from './users.service';
-import { RequestWithUser, UserResponse } from './interfaces/user.interface';
+import { UserResponse } from './interfaces/user.interface';
 
 @Controller('users')
 export class UsersController {

@@ -1,4 +1,3 @@
-// auth.selectors.ts
 import { createSelector, createFeatureSelector } from '@ngrx/store';
 import { AuthState } from './auth.reducer';
 
@@ -18,4 +17,9 @@ export const selectAuthLoading = createSelector(
 export const selectAuthError = createSelector(
   selectAuthState,
   (state) => state.error
+);
+
+export const selectAuthRole = createSelector(
+  selectAuthState,
+  (state) => state.role
 );

@@ -3,8 +3,8 @@ import {
   Controller,
   Get,
   Param,
-  Patch,
   Post,
+  Put,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -49,7 +49,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch('profile')
+  @Put('profile')
   async updateProfile(
     @Request() req,
     @Body() updateProfileDto: UpdateUserDto

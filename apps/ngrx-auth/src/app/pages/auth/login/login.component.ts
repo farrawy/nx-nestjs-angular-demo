@@ -3,19 +3,25 @@ import { CommonModule, NgIf } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { AuthState } from '../../../store/auth/auth.reducer';
 import * as AuthActions from '../../../store/auth/auth.actions';
-import { FormGroup, FormControl } from '@angular/forms';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormGroup,
+  FormControl,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { selectAuthToken } from '../../../store/auth/auth.selectors';
+import { AuthService } from '../../../service/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, NgIf],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
+  styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
   token: string | null = null;
+  errorMessage: string | null = null;
 
   loginForm = new FormGroup({
     email: new FormControl('', {
@@ -26,18 +32,33 @@ export class LoginComponent implements OnInit {
     }),
   });
 
-  constructor(private store: Store<AuthState>) {}
+  constructor(
+    private store: Store<AuthState>,
+    private authService: AuthService
+  ) {}
 
   handleSubmit() {
     if (this.loginForm.valid) {
-      if (this.loginForm.value.email && this.loginForm.value.password) {
-        this.store.dispatch(
-          AuthActions.login({
-            email: this.loginForm.value.email,
-            password: this.loginForm.value.password,
-          })
-        );
+      const { email, password } = this.loginForm.value;
+
+      if (email && password) {
+        this.authService.login(email, password).subscribe({
+          next: (response) => {
+            this.store.dispatch(
+              AuthActions.loginSuccess({
+                access_token: response.access_token,
+                expires_in: response.expires_in,
+              })
+            );
+            this.errorMessage = null;
+          },
+          error: (error) => {
+            this.errorMessage = error;
+          },
+        });
       }
+    } else {
+      this.loginForm.markAllAsTouched(); // Highlight errors if the form is invalid
     }
   }
 

@@ -1,4 +1,3 @@
-// auth.reducer.ts
 import { createReducer, on } from '@ngrx/store';
 import * as AuthActions from './auth.actions';
 import { UserProfile } from '../../models/auth.models';
@@ -8,6 +7,7 @@ export interface AuthState {
   profile: UserProfile | null;
   error: string | null;
   loading: boolean;
+  role?: string | null;
 }
 
 export const initialState: AuthState = {
@@ -15,6 +15,7 @@ export const initialState: AuthState = {
   profile: null,
   error: null,
   loading: false,
+  role: localStorage.getItem('role'),
 };
 
 export const authReducer = createReducer(
@@ -42,5 +43,25 @@ export const authReducer = createReducer(
     profile: null,
     loading: false,
     error,
+  })),
+  on(AuthActions.updateProfile, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+  on(AuthActions.updateProfileSuccess, (state, { profile }) => ({
+    ...state,
+    profile,
+    loading: false,
+    error: null,
+  })),
+  on(AuthActions.updateProfileFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
+  })),
+  on(AuthActions.setRole, (state, { role }) => ({
+    ...state,
+    role,
   }))
 );

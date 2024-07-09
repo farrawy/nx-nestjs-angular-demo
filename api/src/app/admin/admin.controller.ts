@@ -3,7 +3,7 @@ import {
   Controller,
   Get,
   Param,
-  Patch,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -29,7 +29,7 @@ export class AdminController {
     return users;
   }
 
-  @Patch('users/:id/role')
+  @Put('users/:id/role')
   @Roles('admin')
   async updateUserRole(
     @Param('id') userId: string,
@@ -57,5 +57,19 @@ export class AdminController {
     }
 
     return this.usersService.searchUsers(searchParams);
+  }
+
+  @Put('users/:id/activate')
+  @Roles('admin')
+  async activateUser(@Param('id') userId: string): Promise<UserResponse> {
+    console.log(`Activating user ${userId}`); // Log for debugging
+    return this.usersService.activateUser(userId);
+  }
+
+  @Put('users/:id/deactivate')
+  @Roles('admin')
+  async deactivateUser(@Param('id') userId: string): Promise<UserResponse> {
+    console.log(`Deactivating user ${userId}`); // Log for debugging
+    return this.usersService.deactivateUser(userId);
   }
 }

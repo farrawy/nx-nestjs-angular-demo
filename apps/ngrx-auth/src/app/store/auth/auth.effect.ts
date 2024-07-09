@@ -1,11 +1,11 @@
-// auth.effects.ts
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import * as AuthActions from './auth.actions';
-import { AuthService } from '../../service/auth.service';
+
 import { Router } from '@angular/router';
+import { AuthService } from '../../service/auth.service';
 
 @Injectable()
 export class AuthEffects {
@@ -20,9 +20,17 @@ export class AuthEffects {
       ofType(AuthActions.login),
       mergeMap((action) =>
         this.authService.login(action.email, action.password).pipe(
-          map((response) =>
-            AuthActions.loginSuccess({ access_token: response.access_token })
-          ),
+          map((response) => {
+            const expirationTime =
+              new Date().getTime() + response.expires_in * 1000;
+            localStorage.setItem('token', response.access_token);
+            localStorage.setItem('token_expiration', expirationTime.toString());
+            this.router.navigate(['/profile']);
+            return AuthActions.loginSuccess({
+              access_token: response.access_token,
+              expires_in: response.expires_in,
+            });
+          }),
           catchError((error) =>
             of(AuthActions.loginFailure({ error: error.message }))
           )
@@ -34,13 +42,14 @@ export class AuthEffects {
   loginSuccess$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.loginSuccess),
-      tap((action) => {
-        localStorage.setItem('token', action.access_token);
-        this.router.navigate(['/profile']);
-      }),
+      tap(() => this.authService.initAutoLogout()),
       switchMap((action) =>
         this.authService.getProfile(action.access_token).pipe(
-          map((profile) => AuthActions.loadProfileSuccess({ profile })),
+          map((profile) => {
+            localStorage.setItem('role', profile.role);
+            this.router.navigate(['/profile']);
+            return AuthActions.loadProfileSuccess({ profile });
+          }),
           catchError((error) =>
             of(AuthActions.loadProfileFailure({ error: error.message }))
           )
@@ -54,7 +63,10 @@ export class AuthEffects {
       ofType(AuthActions.loadProfile),
       mergeMap((action) =>
         this.authService.getProfile(action.token).pipe(
-          map((profile) => AuthActions.loadProfileSuccess({ profile })),
+          map((profile) => {
+            localStorage.setItem('role', profile.role);
+            return AuthActions.loadProfileSuccess({ profile });
+          }),
           catchError((error) =>
             of(AuthActions.loadProfileFailure({ error: error.message }))
           )
@@ -70,11 +82,52 @@ export class AuthEffects {
         tap(() => {
           localStorage.removeItem('token');
           localStorage.removeItem('token_expiration');
+          localStorage.removeItem('role');
           this.router.navigate(['/login']);
         })
       ),
-    {
-      dispatch: false,
-    }
+    { dispatch: false }
+  );
+
+  updateProfile$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.updateProfile),
+      mergeMap((action) =>
+        this.authService.updateProfile(action.token, action.updateProfile).pipe(
+          map((profile) => AuthActions.updateProfileSuccess({ profile })),
+          catchError((error) =>
+            of(AuthActions.updateProfileFailure({ error: error.message }))
+          )
+        )
+      )
+    )
+  );
+
+  activateUser$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.activateUser),
+      mergeMap((action) =>
+        this.authService.activateUser(action.token, action.userId).pipe(
+          map(() => AuthActions.loadProfile({ token: action.token })),
+          catchError((error) =>
+            of(AuthActions.loadProfileFailure({ error: error.message }))
+          )
+        )
+      )
+    )
+  );
+
+  deactivateUser$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.deactivateUser),
+      mergeMap((action) =>
+        this.authService.deactivateUser(action.token, action.userId).pipe(
+          map(() => AuthActions.loadProfile({ token: action.token })),
+          catchError((error) =>
+            of(AuthActions.loadProfileFailure({ error: error.message }))
+          )
+        )
+      )
+    )
   );
 }
