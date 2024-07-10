@@ -35,10 +35,6 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
-  @Get('test')
-  test() {
-    return 'test';
-  }
 
   @UseGuards(JwtAuthGuard)
   @Post('profile')

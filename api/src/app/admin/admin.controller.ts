@@ -20,6 +20,7 @@ import { SearchUserDto } from '../users/dto/user.dto';
 export class AdminController {
   constructor(private readonly usersService: UsersService) {}
 
+
   @Get('users')
   @Roles('admin')
   async findAllUsers(): Promise<UserResponse[]> {
@@ -37,6 +38,7 @@ export class AdminController {
   }
 
   @Get('search')
+  @Roles('admin')
   async searchUsers(@Query() query: SearchUserDto): Promise<UserResponse[]> {
     const searchParams: any = {};
 

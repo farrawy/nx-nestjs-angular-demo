@@ -31,10 +31,6 @@ export class UsersService {
     return users.map((user) => this.toResponse(user));
   }
 
-  async findOneByEmail(email: string): Promise<UserDocument | null> {
-    return this.userModel.findOne({ email }).exec();
-  }
-
   async findOneByResetToken(token: string): Promise<UserDocument | null> {
     return this.userModel
       .findOne({
