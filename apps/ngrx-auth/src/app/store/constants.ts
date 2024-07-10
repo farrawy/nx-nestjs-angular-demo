@@ -1,4 +1,13 @@
 export const constants = {
+  FORGOT_PASSWORD: '[Auth] Forgot Password',
+  FORGOT_PASSWORD_SUCCESS: '[Auth] Forgot Password Success',
+  FORGOT_PASSWORD_FAILURE: '[Auth] Forgot Password Failure',
+  RESET_PASSWORD: '[Auth] Reset Password',
+  RESET_PASSWORD_SUCCESS: '[Auth] Reset Password Success',
+  RESET_PASSWORD_FAILURE: '[Auth] Reset Password Failure',
+  REGISTER: '[Auth] Register',
+  REGISTER_SUCCESS: '[Auth] Register Success',
+  REGISTER_FAILURE: '[Auth] Register Failure',
   LOGIN: '[Auth] Login',
   LOGIN_SUCCESS: '[Auth] Login Success',
   LOGIN_FAILURE: '[Auth] Login Failure',

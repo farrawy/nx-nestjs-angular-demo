@@ -11,11 +11,12 @@ import {
 } from '@angular/forms';
 import { selectAuthToken } from '../../../store/auth/auth.selectors';
 import { AuthService } from '../../../service/auth.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgIf],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })

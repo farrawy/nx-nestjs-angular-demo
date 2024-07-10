@@ -3,6 +3,51 @@ import { UserProfile } from '../../models/auth.models';
 import { UpdateProfile } from '../../interfaces/user.interface';
 import { constants } from '../constants';
 
+export const forgotPassword = createAction(
+  '[Auth] Forgot Password',
+  props<{ email: string }>()
+);
+
+export const forgotPasswordSuccess = createAction(
+  '[Auth] Forgot Password Success',
+  props<{ token: string }>()
+);
+
+export const forgotPasswordFailure = createAction(
+  '[Auth] Forgot Password Failure',
+  props<{ error: string }>()
+);
+
+export const resetPassword = createAction(
+  '[Auth] Reset Password',
+  props<{ token: string; password: string }>()
+);
+
+export const resetPasswordSuccess = createAction(
+  '[Auth] Reset Password Success',
+  props<{ message: string }>()
+);
+
+export const resetPasswordFailure = createAction(
+  '[Auth] Reset Password Failure',
+  props<{ error: string }>()
+);
+
+export const register = createAction(
+  constants.REGISTER,
+  props<{ name: string; email: string; password: string }>()
+);
+
+export const registerSuccess = createAction(
+  constants.REGISTER_SUCCESS,
+  props<{ profile: UserProfile }>()
+);
+
+export const registerFailure = createAction(
+  constants.REGISTER_FAILURE,
+  props<{ error: string }>()
+);
+
 export const login = createAction(
   constants.LOGIN,
   props<{ email: string; password: string }>()

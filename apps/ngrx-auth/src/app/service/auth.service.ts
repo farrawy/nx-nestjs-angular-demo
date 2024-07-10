@@ -3,11 +3,12 @@ import {
   HttpClient,
   HttpHeaders,
   HttpErrorResponse,
+  HttpParams,
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { UserProfile } from '../models/auth.models';
+import { UserProfile, UserResponse } from '../models/auth.models';
 import { UpdateProfile } from '../interfaces/user.interface';
 
 @Injectable({
@@ -19,6 +20,20 @@ export class AuthService {
   private role: string | null = null;
 
   constructor(private http: HttpClient) {}
+
+  register(
+    name: string,
+    email: string,
+    password: string
+  ): Observable<UserProfile> {
+    return this.http
+      .post<UserProfile>(`${this.apiAuthUrl}/register`, {
+        name,
+        email,
+        password,
+      })
+      .pipe(catchError(this.handleError));
+  }
 
   login(
     email: string,
@@ -42,6 +57,18 @@ export class AuthService {
       );
   }
 
+  forgotPassword(email: string): Observable<{ token: string }> {
+    return this.http
+      .post<{ token: string }>(`${this.apiAuthUrl}/forgot-password`, { email })
+      .pipe(catchError(this.handleError));
+  }
+
+  resetPassword(token: string, password: string): Observable<string> {
+    return this.http
+      .post<string>(`${this.apiAuthUrl}/reset-password/${token}`, { password })
+      .pipe(catchError(this.handleError));
+  }
+
   getProfile(token: string): Observable<UserProfile> {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.post<UserProfile>(
@@ -63,18 +90,32 @@ export class AuthService {
     );
   }
 
-  activateUser(token: string, userId: string): Observable<void> {
+  updateUserRole(userId: string, role: string): Observable<UserResponse> {
+    const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.put<void>(
+    return this.http
+      .put<UserResponse>(
+        `${this.apiUrl}/admin/users/${userId}/role`,
+        { role },
+        { headers }
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  activateUser(userId: string): Observable<UserResponse> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.put<UserResponse>(
       `${this.apiUrl}/admin/users/${userId}/activate`,
       {},
       { headers }
     );
   }
 
-  deactivateUser(token: string, userId: string): Observable<void> {
+  deactivateUser(userId: string): Observable<UserResponse> {
+    const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.put<void>(
+    return this.http.put<UserResponse>(
       `${this.apiUrl}/admin/users/${userId}/deactivate`,
       {},
       { headers }
@@ -93,6 +134,26 @@ export class AuthService {
         this.logout();
       }
     }
+  }
+
+  getUsers(): Observable<UserResponse[]> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http
+      .get<UserResponse[]>(`${this.apiUrl}/admin/users`, { headers })
+      .pipe(catchError(this.handleError));
+  }
+
+  searchUsers(query: any): Observable<UserResponse[]> {
+    let params = new HttpParams();
+    Object.keys(query).forEach((key) => {
+      if (query[key] !== '') {
+        params = params.set(key, query[key]);
+      }
+    });
+    return this.http.get<UserResponse[]>(`${this.apiUrl}/admin/search`, {
+      params,
+    });
   }
 
   getRole(): string | null {

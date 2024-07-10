@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { AuthState } from '../../../store/auth/auth.reducer';
 import {
@@ -17,11 +17,12 @@ import {
 } from '@angular/forms';
 import { UserProfile } from '../../../models/auth.models';
 import { UpdateProfile } from '../../../interfaces/user.interface';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, NgIf],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
 })

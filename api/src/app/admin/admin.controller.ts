@@ -23,9 +23,7 @@ export class AdminController {
   @Get('users')
   @Roles('admin')
   async findAllUsers(): Promise<UserResponse[]> {
-    console.log('Admin route hit'); // Log for debugging
     const users = await this.usersService.findAll();
-    console.log('All users for admin:', users);
     return users;
   }
 
@@ -35,7 +33,6 @@ export class AdminController {
     @Param('id') userId: string,
     @Body('role') role: UserRole
   ): Promise<UserResponse> {
-    console.log(`Updating role for user ${userId} to ${role}`); // Log for debugging
     return this.usersService.updateRole(userId, role);
   }
 

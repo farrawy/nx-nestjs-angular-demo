@@ -95,13 +95,13 @@ export class UsersService {
   }
 
   async updateRole(userId: string, role: UserRole): Promise<UserResponse> {
-    const user = await this.userModel.findById(userId);
+    const user = await this.userModel.findById(userId).exec();
     if (!user) {
       throw new NotFoundException('User not found');
     }
     user.role = role;
     await user.save();
-    return this.toResponse(user);
+    return user.toObject();
   }
 
   async searchUsers(searchParams: any): Promise<UserResponse[]> {
