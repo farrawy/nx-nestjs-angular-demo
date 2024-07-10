@@ -29,12 +29,6 @@ export class AuthService {
     user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour
     await user.save();
 
-    const resetUrl = `http://your-frontend-url/reset-password/${token}`;
-
-    const text = `You are receiving this email because you (or someone else) requested a password reset. Please click on the following link, or paste it into your browser to complete the process: ${resetUrl}`;
-
-    const html = `<p>You are receiving this email because you (or someone else) requested a password reset.</p><p>Please click on the following link, or paste it into your browser to complete the process:</p><p><a href="${resetUrl}">${resetUrl}</a></p>`;
-
     return token;
   }
 

@@ -169,7 +169,7 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.resetPasswordSuccess),
-        tap((action) => this.router.navigate(['/login']))
+        tap(() => this.router.navigate(['/login']))
       ),
     { dispatch: false }
   );
